@@ -1,0 +1,29 @@
+{
+    "name": "com.kagekirin.csharpier",
+    "version": "0.0.0",
+    "displayName": "CSharpier",
+    "description": "Editor extension to run CSharpier before recompiling C# source files",
+    "unity": "2020.1^",
+    "files": [
+        "Assets/Scripts/Editor/**"
+    ],
+    "dependencies": {},
+    "keywords": [
+        "editor",
+        "csharpier",
+        "code beautifier"
+    ],
+    "author": {
+        "name": "KageKirin",
+        "email": "kagekirin@gmail.com",
+        "url": "https://github.com/kagekirin"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/KageKirin/UnityCSharpier.git",
+        "directory": "com.kagekirin.csharpier"
+    },
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com/@kagekirin"
+    }
+}
