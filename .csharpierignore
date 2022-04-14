@@ -1,0 +1,6 @@
+## .csharpierignore for CSharpier Unity package
+
+## never format packages
+Packages/
+Library/
+UserSettings/
