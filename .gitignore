@@ -1,0 +1,5 @@
+## .gitignore for com.kagekirin.csharpier
+
+## artifacts from running npm pack
+*.tar.gz
+*.tgz
