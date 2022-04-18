@@ -41,13 +41,13 @@ jobs:
 
       - name: Get updated version
         id: updated_version
-        uses: KageKirin/get-node-package-version@v0
+        uses: KageKirin/get-node-package-version@v1
       - name: Print updated version
         run: echo ${{ steps.updated_version.outputs.version }}
 
       - name: Update unity project bundle version
         id: set_version
-        uses: KageKirin/set-unity-bundle-version@v0
+        uses: KageKirin/set-unity-bundle-version@v1
         with:
           version: ${{ steps.updated_version.outputs.version }}
       - name: Print set version
