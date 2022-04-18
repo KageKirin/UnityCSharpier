@@ -1,0 +1,63 @@
+name: Tag Increment Test
+
+on: [push]
+
+## Does the same stuff as tag-on-merge-pr
+## EXCEPT pushing the changes
+
+jobs:
+  tagtest:
+    name: Test incrementing tag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+
+      - name: Configure git
+        run: |
+          git config --local user.email "kagekirin+ci@gmail.com"
+          git config --local user.name "CI Bot"
+
+      - name: Install conventional-changelog
+        run: npm i conventional-changelog-cli -g
+
+      - name: Get latest git tag
+        id: latesttag
+        run: |
+          git fetch --tags
+          git tag -l --sort v:refname | tail -n 1
+          echo "latest_tag=`git tag -l --sort v:refname | tail -n 1`"
+          echo "latest_tag=`git tag -l --sort v:refname | tail -n 1`" >> $GITHUB_ENV
+
+      - name: Verify latest_tag in env
+        run: echo "${{ env.latest_tag }}"
+
+      - name: Bump version (NPM)
+        run: npm version patch
+
+      - name: Get updated version
+        id: updated_version
+        uses: KageKirin/get-node-package-version@v1
+      - name: Print updated version
+        run: echo ${{ steps.updated_version.outputs.version }}
+
+      - name: Update unity project bundle version
+        id: set_version
+        uses: KageKirin/set-unity-bundle-version@v1
+        with:
+          version: ${{ steps.updated_version.outputs.version }}
+      - name: Print set version
+        run: echo ${{ steps.set_version.outputs.version }}
+
+      - name: Add updated project settings
+        run: |
+          git add ProjectSettings/ProjectSettings.asset
+          git commit -m "chore(tag): update ProjectSettings.asset bundle version to ${{ steps.updated_version.outputs.version }}"
+
+      - name: Update changelog
+        run: |
+          conventional-changelog -p angular -i CHANGELOG.md -s -r 0
+          cat CHANGELOG.md
+          git add CHANGELOG.md
+          git commit -m "chore(tag): update changelog for version to ${{ steps.updated_version.outputs.version }}"
