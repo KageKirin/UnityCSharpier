@@ -23,10 +23,10 @@ jobs:
         run: npm pack
       - name: Verify
         run: |
-          ls com.kagekirin.csharpier*.tgz
-          tar tvf com.kagekirin.csharpier*.tgz
+          ls com.kagekirin.unitycsharpier*.tgz
+          tar tvf com.kagekirin.unitycsharpier*.tgz
       - name: Store package name in env
-        run: echo "package_name=`ls com.kagekirin.csharpier*.tgz`" >> $GITHUB_ENV
+        run: echo "package_name=`ls com.kagekirin.unitycsharpier*.tgz`" >> $GITHUB_ENV
       - name: Verify package_name in env
         run: echo "${{ env.package_name }}"
 
