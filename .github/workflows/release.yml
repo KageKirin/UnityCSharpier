@@ -22,7 +22,9 @@ jobs:
       - name: Pack
         run: npm pack
       - name: Verify
-        run: tar tvf com.kagekirin.csharpier*.tgz
+        run: |
+          ls com.kagekirin.csharpier*.tgz
+          tar tvf com.kagekirin.csharpier*.tgz
 
       - name: Create release
         uses: actions/create-release@v1
