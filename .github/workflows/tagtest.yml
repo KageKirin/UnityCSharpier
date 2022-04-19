@@ -1,6 +1,9 @@
 name: Tag Increment Test
 
-on: [push]
+on:
+  push:
+    branches-ignore:
+      - 'main'
 
 ## Does the same stuff as tag-on-merge-pr
 ## EXCEPT pushing the changes
