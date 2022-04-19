@@ -25,6 +25,10 @@ jobs:
         run: |
           ls com.kagekirin.csharpier*.tgz
           tar tvf com.kagekirin.csharpier*.tgz
+      - name: Store package name in env
+        run: echo "package_name=`ls com.kagekirin.csharpier*.tgz`" >> $GITHUB_ENV
+      - name: Verify package_name in env
+        run: echo "${{ env.package_name }}"
 
       - name: Create release
         uses: actions/create-release@v1
@@ -44,8 +48,8 @@ jobs:
           GITHUB_TOKEN: ${{ github.TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: com.kagekirin.csharpier-${{ github.ref_name }}.tgz
-          asset_name: com.kagekirin.csharpier-${{ github.ref_name }}.tgz
+          asset_path: ${{ env.package_name }}.tgz
+          asset_name: ${{ env.package_name }}.tgz
           asset_content_type: application/gzip
 
 

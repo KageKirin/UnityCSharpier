@@ -23,3 +23,8 @@ jobs:
         run: |
           ls com.kagekirin.csharpier*.tgz
           tar tvf com.kagekirin.csharpier*.tgz
+
+      - name: Store package name in env
+        run: echo "package_name=`ls com.kagekirin.csharpier*.tgz`" >> $GITHUB_ENV
+      - name: Verify package_name in env
+        run: echo "${{ env.package_name }}"
