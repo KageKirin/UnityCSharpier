@@ -1,0 +1,23 @@
+name: Build Test
+
+on: [push]
+
+## Does the same stuff as release
+## EXCEPT publishing the artifacts
+
+jobs:
+  buildtest:
+    name: Test build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install dependencies
+        run: yarn install
+      - name: Pack
+        run: npm pack
+      - name: Verify
+        run: tar tvf com.kagekirin.csharpier*.tgz

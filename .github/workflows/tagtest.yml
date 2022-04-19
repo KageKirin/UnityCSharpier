@@ -1,20 +1,17 @@
-name: Tag on Merge Pull Request
+name: Tag Increment Test
 
-on:
-  pull_request:
-    branches:
-      - main
-    types: [closed]
+on: [push]
+
+## Does the same stuff as tag-on-merge-pr
+## EXCEPT pushing the changes
 
 jobs:
-  bump:
-    name: Bump tag
-    if: github.event.pull_request.merged == true
+  tagtest:
+    name: Test incrementing tag
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
         with:
-          token: ${{ secrets.GH_CHAIN_TOKEN }}
           lfs: true
 
       - name: Configure git
@@ -64,9 +61,3 @@ jobs:
           cat CHANGELOG.md
           git add CHANGELOG.md
           git commit -m "chore(tag): update changelog for version to ${{ steps.updated_version.outputs.version }}"
-
-      - name: Push tag
-        run: |
-          git status
-          git log --oneline | tee "log"
-          git push --follow-tags origin
