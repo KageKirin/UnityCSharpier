@@ -48,8 +48,8 @@ jobs:
           GITHUB_TOKEN: ${{ github.TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ env.package_name }}.tgz
-          asset_name: ${{ env.package_name }}.tgz
+          asset_path: ${{ env.package_name }}
+          asset_name: ${{ env.package_name }}
           asset_content_type: application/gzip
 
 
