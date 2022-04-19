@@ -17,6 +17,8 @@ jobs:
         with:
           node-version: 14
 
+      - name: Install dependencies
+        run: yarn install
       - name: Pack
         run: npm pack
       - name: Verify
@@ -34,11 +36,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.TOKEN }}
 
-      - name: Publish to GitHub NPM Registry
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
       - name: Upload release artifacts
         uses: actions/upload-release-asset@v1
         env:
@@ -48,3 +45,25 @@ jobs:
           asset_path: com.kagekirin.csharpier-${{ github.ref }}.tgz
           asset_name: com.kagekirin.csharpier-${{ github.ref }}.tgz
           asset_content_type: application/gzip
+
+
+  publish-to-github-registry:
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+          registry-url: https://npm.pkg.github.com/
+          scope: '@kagekirin'
+      - name: Install dependencies
+        run: yarn install
+      - name: Publish to GitHub NPM Registry
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
