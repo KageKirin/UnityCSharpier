@@ -22,7 +22,9 @@ jobs:
       - name: Pack
         run: npm pack
       - name: Verify
-        run: tar tvf com.kagekirin.csharpier*.tgz
+        run: |
+          ls com.kagekirin.csharpier*.tgz
+          tar tvf com.kagekirin.csharpier*.tgz
 
       - name: Create release
         uses: actions/create-release@v1
@@ -30,7 +32,7 @@ jobs:
         with:
           draft: false
           prerelease: false
-          release_name: Release ${{ github.ref }}
+          release_name: Release ${{ github.ref_name }}
           tag_name: ${{ github.ref }}
           body_path: CHANGELOG.md
         env:
@@ -42,8 +44,8 @@ jobs:
           GITHUB_TOKEN: ${{ github.TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: com.kagekirin.csharpier-${{ github.ref }}.tgz
-          asset_name: com.kagekirin.csharpier-${{ github.ref }}.tgz
+          asset_path: com.kagekirin.csharpier-${{ github.ref_name }}.tgz
+          asset_name: com.kagekirin.csharpier-${{ github.ref_name }}.tgz
           asset_content_type: application/gzip
 
 
