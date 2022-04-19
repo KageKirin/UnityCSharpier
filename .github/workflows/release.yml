@@ -87,6 +87,8 @@ jobs:
           node-version: 14
           registry-url: https://registry.npmjs.org/
           scope: '@kagekirin'
+      - name: Patch package.json
+        run: sed -i -e "s|npm.pkg.github.com|registry.npmjs.org|g" package.json
       - name: Install dependencies
         run: yarn install
       - name: Publish to NPM.JS Registry
