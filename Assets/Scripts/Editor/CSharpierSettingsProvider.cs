@@ -89,6 +89,7 @@ namespace kagekirin.csharpier
             }
             EditorGUILayout.EndHorizontal();
 
+            m_CSharpierSettings.ApplyModifiedPropertiesWithoutUndo();
         }
 
         [SettingsProvider]
