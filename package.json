@@ -3,7 +3,7 @@
     "version": "0.0.12",
     "displayName": "CSharpier",
     "description": "Unity Editor extension to run CSharpier before recompiling C# source files",
-    "unity": "2020.1^",
+    "unity": "2021.1^",
     "files": [
         "Assets/Scripts/Editor/**",
         "Assets/Scripts/Editor.meta",
