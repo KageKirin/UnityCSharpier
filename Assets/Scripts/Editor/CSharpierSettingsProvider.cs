@@ -30,6 +30,9 @@ namespace kagekirin.csharpier
                 "Set from environment"
             );
             public static GUIContent csharpierIgnore = new GUIContent(".csharpierignore");
+            public static GUIContent csharpierIgnoreButton = new GUIContent(
+                "Create .csharpierignore"
+            );
 
             public static GUILayoutOption[] csharpierIgnoreOptions = new GUILayoutOption[]
             {
@@ -75,6 +78,17 @@ namespace kagekirin.csharpier
                 Styles.csharpierIgnore,
                 Styles.csharpierIgnoreOptions
             );
+
+            var buttonRect = EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("", Styles.csharpierButtonSpaceOptions);
+            if (GUILayout.Button(Styles.csharpierIgnoreButton))
+            {
+                CSharpierSettings.CreateCSharpierIgnore();
+                m_CSharpierSettings = CSharpierSettings.GetSerializedSettings();
+                Repaint();
+            }
+            EditorGUILayout.EndHorizontal();
+
         }
 
         [SettingsProvider]
