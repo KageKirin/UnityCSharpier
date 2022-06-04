@@ -27,8 +27,11 @@ UserSettings/
 ";
 
         [SerializeField]
+        [ContextMenuItem("Set from environment", "SetCSharpierPathFromEnv")]
         public string m_CSharpierPath;
 
+        [SerializeField]
+        [ContextMenuItem("Create .csharpierignore", "CreateDefaultCSharpierIgnore")]
         public string m_CSharpierIgnoreContents = ""; // not serialized on purpose
 
         internal static CSharpierSettings GetOrCreateSettings()
@@ -70,6 +73,17 @@ UserSettings/
         internal static SerializedObject GetSerializedSettings()
         {
             return new SerializedObject(GetOrCreateSettings());
+        }
+
+        private void SetCSharpierPathFromEnv()
+        {
+            m_CSharpierPath = LocateCSharpierTool();
+        }
+
+        private void CreateDefaultCSharpierIgnore()
+        {
+            CreateCSharpierIgnore();
+            m_CSharpierIgnoreContents = File.ReadAllText(k_CSharpierIgnorePath);
         }
 
         private static void FlushCSharpierIgnore(string contents)
