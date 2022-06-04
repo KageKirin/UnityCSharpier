@@ -73,11 +73,18 @@ namespace kagekirin.csharpier
             EditorGUILayout.EndHorizontal();
 
             GUILayout.Space(20.0f);
-            EditorGUILayout.PropertyField(
-                m_CSharpierSettings.FindProperty("m_CSharpierIgnoreContents"),
-                Styles.csharpierIgnore,
+            var ignoreRect = EditorGUILayout.BeginHorizontal();
+            var csharpierignoreText =
+                m_CSharpierSettings.FindProperty("m_CSharpierIgnoreContents").stringValue;
+
+            EditorGUILayout.LabelField(Styles.csharpierIgnore, Styles.csharpierButtonSpaceOptions);
+            csharpierignoreText = EditorGUILayout.TextArea(
+                csharpierignoreText,
                 Styles.csharpierIgnoreOptions
             );
+            m_CSharpierSettings.FindProperty("m_CSharpierIgnoreContents").stringValue =
+                csharpierignoreText;
+            EditorGUILayout.EndHorizontal();
 
             var buttonRect = EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("", Styles.csharpierButtonSpaceOptions);
