@@ -12,6 +12,19 @@ namespace kagekirin.csharpier
 
         class Styles
         {
+            /// explainer text
+            public static GUIContent csharpierExplainer = new GUIContent(
+                "Using CSharpier for Unity requires having both dotnet and the csharpier tool installed."
+                    + "\nTo install csharpier, run `dotnet tool install -g csharpier` from the command line."
+                    + "\nOnce installed, click the button below to automatically set the correct path to `dotnet-csharpier`."
+            );
+
+            /// formatting
+            public static GUIStyle csharpierExplainerStyle = new GUIStyle(GUI.skin.button)
+            {
+                alignment = TextAnchor.UpperLeft,
+            };
+
             public static GUIContent csharpierPathString = new GUIContent("Csharpier install path");
             public static GUIContent csharpierIgnore = new GUIContent(".csharpierignore");
 
@@ -31,6 +44,9 @@ namespace kagekirin.csharpier
 
         public override void OnGUI(string searchContext)
         {
+            GUILayout.Box(Styles.csharpierExplainer, Styles.csharpierExplainerStyle);
+            GUILayout.Space(20.0f);
+
             EditorGUILayout.PropertyField(
                 m_CSharpierSettings.FindProperty("m_CSharpierPath"),
                 Styles.csharpierPathString
