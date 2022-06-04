@@ -17,6 +17,15 @@ namespace kagekirin.csharpier
         private const string k_SettingsPath = "Assets/Editor/User/CSharpierSettings.asset";
         private const string k_CSharpierIgnorePath = ".csharpierignore";
 
+        private const string k_CSharpierDefaultContents =
+            @"## .csharpierignore for {0}
+
+## never format packages
+Packages/
+Library/
+UserSettings/
+";
+
         [SerializeField]
         public string m_CSharpierPath;
 
@@ -56,5 +65,17 @@ namespace kagekirin.csharpier
         {
             return new SerializedObject(GetOrCreateSettings());
         }
+
+        public static void CreateCSharpierIgnore()
+        {
+            if (!File.Exists(k_CSharpierIgnorePath))
+            {
+                File.WriteAllText(
+                    k_CSharpierIgnorePath,
+                    string.Format(k_CSharpierDefaultContents, PlayerSettings.productName)
+                );
+            }
+        }
+
     }
 } // namespace kagekirin.csharpier
