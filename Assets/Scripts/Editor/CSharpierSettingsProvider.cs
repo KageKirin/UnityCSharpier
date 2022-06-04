@@ -25,7 +25,7 @@ namespace kagekirin.csharpier
                 alignment = TextAnchor.UpperLeft,
             };
 
-            public static GUIContent csharpierPathString = new GUIContent("Csharpier install path");
+            public static GUIContent csharpierPathString = new GUIContent("CSharpier install path");
             public static GUIContent csharpierSetPathButton = new GUIContent(
                 "Set from environment"
             );
