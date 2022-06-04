@@ -7,6 +7,13 @@ namespace kagekirin.csharpier
 {
     public class CSharpierSettings : ScriptableObject
     {
+#if UNITY_EDITOR_WIN
+        private const string k_CSharpierExe = "dotnet-csharpier.exe";
+#else
+        private const string k_CSharpierExe = "dotnet-csharpier";
+#endif // UNITY_EDITOR_WIN
+
+
         private const string k_SettingsPath = "Assets/Editor/User/CSharpierSettings.asset";
         private const string k_CSharpierIgnorePath = ".csharpierignore";
 
@@ -22,15 +29,7 @@ namespace kagekirin.csharpier
             if (settings == null)
             {
                 settings = ScriptableObject.CreateInstance<CSharpierSettings>();
-#if UNITY_EDITOR_WIN
-                settings.m_CSharpierPath = @"dotnet-csharpier.exe";
-#elif UNITY_EDITOR_OSX
-                settings.m_CSharpierPath = @"$(HOME)/.dotnet/tools/dotnet-csharpier";
-#elif UNITY_EDITOR_LINUX
-                settings.m_CSharpierPath = @"$(HOME)/.dotnet/tools/dotnet-csharpier";
-#else
-                settings.m_CSharpierPath = @"dotnet-csharpier";
-#endif
+                settings.m_CSharpierPath = k_CSharpierExe;
 
                 if (!File.Exists(k_SettingsPath))
                 {
