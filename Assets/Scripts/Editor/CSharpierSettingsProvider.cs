@@ -26,11 +26,20 @@ namespace kagekirin.csharpier
             };
 
             public static GUIContent csharpierPathString = new GUIContent("Csharpier install path");
+            public static GUIContent csharpierSetPathButton = new GUIContent(
+                "Set from environment"
+            );
             public static GUIContent csharpierIgnore = new GUIContent(".csharpierignore");
 
             public static GUILayoutOption[] csharpierIgnoreOptions = new GUILayoutOption[]
             {
                 GUILayout.Height(400),
+            };
+
+            public static GUILayoutOption[] csharpierButtonSpaceOptions = new GUILayoutOption[]
+            {
+                GUILayout.Width(EditorGUIUtility.labelWidth),
+                GUILayout.MaxWidth(EditorGUIUtility.labelWidth),
             };
         }
 
@@ -47,10 +56,20 @@ namespace kagekirin.csharpier
             GUILayout.Box(Styles.csharpierExplainer, Styles.csharpierExplainerStyle);
             GUILayout.Space(20.0f);
 
-            EditorGUILayout.PropertyField(
-                m_CSharpierSettings.FindProperty("m_CSharpierPath"),
-                Styles.csharpierPathString
-            );
+            var pathRect = EditorGUILayout.BeginHorizontal();
+            var csharpierPath = m_CSharpierSettings.FindProperty("m_CSharpierPath");
+            EditorGUILayout.PropertyField(csharpierPath, Styles.csharpierPathString);
+            if (GUILayout.Button(Styles.csharpierSetPathButton, Styles.csharpierButtonSpaceOptions))
+            {
+                var path = CSharpierSettings.LocateCSharpierTool();
+                if (!string.IsNullOrEmpty(path))
+                {
+                    csharpierPath.stringValue = path;
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+
+            GUILayout.Space(20.0f);
             EditorGUILayout.PropertyField(
                 m_CSharpierSettings.FindProperty("m_CSharpierIgnoreContents"),
                 Styles.csharpierIgnore,
