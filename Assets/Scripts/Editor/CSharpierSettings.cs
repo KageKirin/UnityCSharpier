@@ -62,17 +62,26 @@ UserSettings/
             return settings;
         }
 
+        public void OnValidate()
+        {
+            FlushCSharpierIgnore(m_CSharpierIgnoreContents);
+        }
+
         internal static SerializedObject GetSerializedSettings()
         {
             return new SerializedObject(GetOrCreateSettings());
+        }
+
+        private static void FlushCSharpierIgnore(string contents)
+        {
+            File.WriteAllText(k_CSharpierIgnorePath, contents);
         }
 
         public static void CreateCSharpierIgnore()
         {
             if (!File.Exists(k_CSharpierIgnorePath))
             {
-                File.WriteAllText(
-                    k_CSharpierIgnorePath,
+                FlushCSharpierIgnore(
                     string.Format(k_CSharpierDefaultContents, PlayerSettings.productName)
                 );
             }
