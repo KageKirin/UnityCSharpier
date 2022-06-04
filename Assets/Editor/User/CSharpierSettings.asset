@@ -12,5 +12,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c99cbaa615b1246fa9e7944627558616, type: 3}
   m_Name: CSharpierSettings
   m_EditorClassIdentifier: 
-  m_CSharpierPath: /usr/local/share/dotnet/dotnet
-  m_CSharpierIgnoreContents: 
+  m_CSharpierPath: /Users/christian.helmich/.dotnet/tools/dotnet-csharpier
+  m_CSharpierIgnoreContents: '## .csharpierignore for CSharpier Unity package
+
+
+    ##
+    never format packages
+
+    Packages/
+
+    Library/
+
+    UserSettings/
+
+
+    ##
+    more ignores
+
+    Assets/NotOurs
+
+'

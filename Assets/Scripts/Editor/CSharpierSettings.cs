@@ -7,8 +7,24 @@ namespace kagekirin.csharpier
 {
     public class CSharpierSettings : ScriptableObject
     {
+#if UNITY_EDITOR_WIN
+        private const string k_CSharpierExe = "dotnet-csharpier.exe";
+#else
+        private const string k_CSharpierExe = "dotnet-csharpier";
+#endif // UNITY_EDITOR_WIN
+
+
         private const string k_SettingsPath = "Assets/Editor/User/CSharpierSettings.asset";
         private const string k_CSharpierIgnorePath = ".csharpierignore";
+
+        private const string k_CSharpierDefaultContents =
+            @"## .csharpierignore for {0}
+
+## never format packages
+Packages/
+Library/
+UserSettings/
+";
 
         [SerializeField]
         public string m_CSharpierPath;
@@ -22,15 +38,7 @@ namespace kagekirin.csharpier
             if (settings == null)
             {
                 settings = ScriptableObject.CreateInstance<CSharpierSettings>();
-#if UNITY_EDITOR_WIN
-                settings.m_CSharpierPath = @"dotnet-csharpier.exe";
-#elif UNITY_EDITOR_OSX
-                settings.m_CSharpierPath = @"$(HOME)/.dotnet/tools/dotnet-csharpier";
-#elif UNITY_EDITOR_LINUX
-                settings.m_CSharpierPath = @"$(HOME)/.dotnet/tools/dotnet-csharpier";
-#else
-                settings.m_CSharpierPath = @"dotnet-csharpier";
-#endif
+                settings.m_CSharpierPath = k_CSharpierExe;
 
                 if (!File.Exists(k_SettingsPath))
                 {
@@ -47,15 +55,89 @@ namespace kagekirin.csharpier
             }
             else
             {
-                settings.m_CSharpierIgnoreContents = "could not find .csharpierignore";
+                settings.m_CSharpierIgnoreContents =
+                    "click button to create default .csharpierignore";
             }
 
             return settings;
         }
 
+        public void OnValidate()
+        {
+            FlushCSharpierIgnore(m_CSharpierIgnoreContents);
+        }
+
         internal static SerializedObject GetSerializedSettings()
         {
             return new SerializedObject(GetOrCreateSettings());
+        }
+
+        private static void FlushCSharpierIgnore(string contents)
+        {
+            File.WriteAllText(k_CSharpierIgnorePath, contents);
+        }
+
+        public static void CreateCSharpierIgnore()
+        {
+            if (!File.Exists(k_CSharpierIgnorePath))
+            {
+                FlushCSharpierIgnore(
+                    string.Format(k_CSharpierDefaultContents, PlayerSettings.productName)
+                );
+            }
+        }
+
+        public static string LocateCSharpierTool()
+        {
+            try
+            {
+                // look in $PATH
+                var PATH =
+                    Environment.GetEnvironmentVariable("PATH")
+                    ?? Environment.GetEnvironmentVariable("Path");
+
+                if (!String.IsNullOrEmpty(PATH))
+                {
+#if UNITY_EDITOR_WIN
+                    var pathes = PATH.Split(";");
+#else
+                    var pathes = PATH.Split(":");
+#endif // UNITY_EDITOR_WIN
+
+                    foreach (var path in pathes)
+                    {
+                        var csharpierPath = Path.Join(path, k_CSharpierExe);
+                        if (File.Exists(csharpierPath))
+                        {
+                            return csharpierPath;
+                        }
+                    }
+                }
+
+                // look in $HOME
+                var HOME =
+                    Environment.GetEnvironmentVariable("HOME")
+                    ?? Environment.GetEnvironmentVariable("Home");
+
+                if (!String.IsNullOrEmpty(HOME))
+                {
+                    var csharpierPath = Path.Join(
+                        Path.Join(HOME, ".dotnet"),
+                        "tools",
+                        k_CSharpierExe
+                    );
+                    if (File.Exists(csharpierPath))
+                    {
+                        return csharpierPath;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"locating CSharpier: {e.Message}");
+            }
+
+            return k_CSharpierExe;
         }
     }
 } // namespace kagekirin.csharpier
