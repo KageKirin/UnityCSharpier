@@ -17,6 +17,11 @@ jobs:
 
       - name: Install dependencies
         run: yarn install
+
+      - name: Remove superfluous metafiles we do not want to pack
+        run: |
+          rm -r Assets/Editor*
+
       - name: Pack
         run: npm pack
       - name: Verify
