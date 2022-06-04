@@ -27,6 +27,7 @@ UserSettings/
 ";
 
         [SerializeField]
+        [ContextMenuItem("Set from environment", "SetCSharpierPathFromEnv")]
         public string m_CSharpierPath;
 
         public string m_CSharpierIgnoreContents = ""; // not serialized on purpose
@@ -70,6 +71,11 @@ UserSettings/
         internal static SerializedObject GetSerializedSettings()
         {
             return new SerializedObject(GetOrCreateSettings());
+        }
+
+        private void SetCSharpierPathFromEnv()
+        {
+            m_CSharpierPath = LocateCSharpierTool();
         }
 
         private static void FlushCSharpierIgnore(string contents)
