@@ -55,7 +55,8 @@ UserSettings/
             }
             else
             {
-                settings.m_CSharpierIgnoreContents = "could not find .csharpierignore";
+                settings.m_CSharpierIgnoreContents =
+                    "click button to create default .csharpierignore";
             }
 
             return settings;
