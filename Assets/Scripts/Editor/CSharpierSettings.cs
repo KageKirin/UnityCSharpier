@@ -78,5 +78,57 @@ UserSettings/
             }
         }
 
+        public static string LocateCSharpierTool()
+        {
+            try
+            {
+                // look in $PATH
+                var PATH =
+                    Environment.GetEnvironmentVariable("PATH")
+                    ?? Environment.GetEnvironmentVariable("Path");
+
+                if (!String.IsNullOrEmpty(PATH))
+                {
+#if UNITY_EDITOR_WIN
+                    var pathes = PATH.Split(";");
+#else
+                    var pathes = PATH.Split(":");
+#endif // UNITY_EDITOR_WIN
+
+                    foreach (var path in pathes)
+                    {
+                        var csharpierPath = Path.Join(path, k_CSharpierExe);
+                        if (File.Exists(csharpierPath))
+                        {
+                            return csharpierPath;
+                        }
+                    }
+                }
+
+                // look in $HOME
+                var HOME =
+                    Environment.GetEnvironmentVariable("HOME")
+                    ?? Environment.GetEnvironmentVariable("Home");
+
+                if (!String.IsNullOrEmpty(HOME))
+                {
+                    var csharpierPath = Path.Join(
+                        Path.Join(HOME, ".dotnet"),
+                        "tools",
+                        k_CSharpierExe
+                    );
+                    if (File.Exists(csharpierPath))
+                    {
+                        return csharpierPath;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"locating CSharpier: {e.Message}");
+            }
+
+            return k_CSharpierExe;
+        }
     }
 } // namespace kagekirin.csharpier
