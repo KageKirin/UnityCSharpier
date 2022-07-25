@@ -4,3 +4,6 @@
 Packages/
 Library/
 UserSettings/
+
+## more ignores
+Assets/NotOurs

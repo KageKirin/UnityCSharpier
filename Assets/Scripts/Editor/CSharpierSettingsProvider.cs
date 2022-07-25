@@ -92,12 +92,14 @@ namespace kagekirin.csharpier
 
             var buttonRect = EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("", Styles.csharpierButtonSpaceOptions);
+            GUI.enabled = String.IsNullOrWhiteSpace(csharpierignoreText);
             if (GUILayout.Button(Styles.csharpierIgnoreButton))
             {
                 CSharpierSettings.CreateCSharpierIgnore();
                 m_CSharpierSettings = CSharpierSettings.GetSerializedSettings();
                 Repaint();
             }
+            GUI.enabled = true;
             EditorGUILayout.EndHorizontal();
 
             m_CSharpierSettings.ApplyModifiedPropertiesWithoutUndo();
