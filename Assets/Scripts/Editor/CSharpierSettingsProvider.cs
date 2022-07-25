@@ -1,8 +1,9 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.UIElements;
-using System.IO;
+using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace kagekirin.csharpier
 {
@@ -46,8 +47,11 @@ namespace kagekirin.csharpier
             };
         }
 
-        public CSharpierSettingsProvider(string path, SettingsScope scope = SettingsScope.User)
-            : base(path, scope) { }
+        public CSharpierSettingsProvider(
+            string path,
+            SettingsScope scopes,
+            IEnumerable<string> keywords = null
+        ) : base(path, scopes, keywords) { }
 
         public override void OnActivate(string searchContext, VisualElement rootElement)
         {
@@ -110,6 +114,13 @@ namespace kagekirin.csharpier
             // Automatically extract all keywords from the Styles.
             provider.keywords = GetSearchKeywordsFromGUIContentProperties<Styles>();
             return provider;
+        }
+
+        private IDisposable CreateSettingsWindowGUIScope()
+        {
+            var unityEditorAssembly = Assembly.GetAssembly(typeof(EditorWindow));
+            var type = unityEditorAssembly.GetType("UnityEditor.SettingsWindow+GUIScope");
+            return Activator.CreateInstance(type) as IDisposable;
         }
     }
 } // namespace kagekirin.csharpier
