@@ -25,29 +25,34 @@ Library/
 UserSettings/
 ";
 
+        private const string k_CSharpierIgnoreDoesNotExist =
+            "click button to create default .csharpierignore";
+
         [SerializeField]
         [ContextMenuItem("Set from environment", "SetCSharpierPathFromEnv")]
         public string m_CSharpierPath;
 
         [SerializeField]
         [ContextMenuItem("Create .csharpierignore", "CreateDefaultCSharpierIgnore")]
-        public string m_CSharpierIgnoreContents = ""; // not serialized on purpose
-
-        public CSharpierSettings()
-        {
-            if (File.Exists(k_CSharpierIgnorePath))
-            {
-                m_CSharpierIgnoreContents = File.ReadAllText(k_CSharpierIgnorePath);
-            }
-            else
-            {
-                m_CSharpierIgnoreContents = "click button to create default .csharpierignore";
-            }
-        }
+        public string m_CSharpierIgnoreContents = "";
 
         public void OnValidate()
         {
-            FlushCSharpierIgnore(m_CSharpierIgnoreContents);
+            if (String.IsNullOrWhiteSpace(m_CSharpierIgnoreContents))
+            {
+                if (File.Exists(k_CSharpierIgnorePath))
+                {
+                    m_CSharpierIgnoreContents = File.ReadAllText(k_CSharpierIgnorePath);
+                }
+                else
+                {
+                    m_CSharpierIgnoreContents = k_CSharpierIgnoreDoesNotExist;
+                }
+            }
+            else if (m_CSharpierIgnoreContents != k_CSharpierIgnoreDoesNotExist)
+            {
+                FlushCSharpierIgnore(m_CSharpierIgnoreContents);
+            }
         }
 
         internal static SerializedObject GetSerializedSettings()
