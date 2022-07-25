@@ -5,7 +5,8 @@ using System.IO;
 
 namespace kagekirin.csharpier
 {
-    public class CSharpierSettings : ScriptableObject
+    [FilePath("CSharpierSettings.asset", FilePathAttribute.Location.PreferencesFolder)]
+    public class CSharpierSettings : ScriptableSingleton<CSharpierSettings>
     {
 #if UNITY_EDITOR_WIN
         private const string k_CSharpierExe = "dotnet-csharpier.exe";
@@ -13,8 +14,6 @@ namespace kagekirin.csharpier
         private const string k_CSharpierExe = "dotnet-csharpier";
 #endif // UNITY_EDITOR_WIN
 
-
-        private const string k_SettingsPath = "Assets/Editor/User/CSharpierSettings.asset";
         private const string k_CSharpierIgnorePath = ".csharpierignore";
 
         private const string k_CSharpierDefaultContents =
@@ -26,53 +25,40 @@ Library/
 UserSettings/
 ";
 
+        private const string k_CSharpierIgnoreDoesNotExist =
+            "click button to create default .csharpierignore";
+
         [SerializeField]
         [ContextMenuItem("Set from environment", "SetCSharpierPathFromEnv")]
         public string m_CSharpierPath;
 
         [SerializeField]
         [ContextMenuItem("Create .csharpierignore", "CreateDefaultCSharpierIgnore")]
-        public string m_CSharpierIgnoreContents = ""; // not serialized on purpose
-
-        internal static CSharpierSettings GetOrCreateSettings()
-        {
-            var settings = AssetDatabase.LoadAssetAtPath<CSharpierSettings>(k_SettingsPath);
-
-            if (settings == null)
-            {
-                settings = ScriptableObject.CreateInstance<CSharpierSettings>();
-                settings.m_CSharpierPath = k_CSharpierExe;
-
-                if (!File.Exists(k_SettingsPath))
-                {
-                    Directory.CreateDirectory(Path.GetDirectoryName(k_SettingsPath));
-                    AssetDatabase.CreateAsset(settings, k_SettingsPath);
-                }
-
-                AssetDatabase.SaveAssets();
-            }
-
-            if (File.Exists(k_CSharpierIgnorePath))
-            {
-                settings.m_CSharpierIgnoreContents = File.ReadAllText(k_CSharpierIgnorePath);
-            }
-            else
-            {
-                settings.m_CSharpierIgnoreContents =
-                    "click button to create default .csharpierignore";
-            }
-
-            return settings;
-        }
+        public string m_CSharpierIgnoreContents = "";
 
         public void OnValidate()
         {
-            FlushCSharpierIgnore(m_CSharpierIgnoreContents);
+            if (String.IsNullOrWhiteSpace(m_CSharpierIgnoreContents))
+            {
+                if (File.Exists(k_CSharpierIgnorePath))
+                {
+                    m_CSharpierIgnoreContents = File.ReadAllText(k_CSharpierIgnorePath);
+                }
+                else
+                {
+                    m_CSharpierIgnoreContents = k_CSharpierIgnoreDoesNotExist;
+                }
+            }
+            else if (m_CSharpierIgnoreContents != k_CSharpierIgnoreDoesNotExist)
+            {
+                FlushCSharpierIgnore(m_CSharpierIgnoreContents);
+            }
         }
 
         internal static SerializedObject GetSerializedSettings()
         {
-            return new SerializedObject(GetOrCreateSettings());
+            CSharpierSettings.instance.Save(true);
+            return new SerializedObject(CSharpierSettings.instance);
         }
 
         private void SetCSharpierPathFromEnv()

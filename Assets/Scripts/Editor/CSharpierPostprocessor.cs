@@ -28,8 +28,6 @@ namespace kagekirin.csharpier
             if (!importedAssets.Any(assetPath => assetPath.EndsWith(".cs")))
                 return;
 
-            CSharpierSettings CSharpierSettings = CSharpierSettings.GetOrCreateSettings();
-
             var scriptFiles = importedAssets
                 .Where(assetPath => assetPath.EndsWith(".cs"))
                 .Select(assetPath => Path.Join(RootPath, assetPath))
@@ -47,7 +45,7 @@ namespace kagekirin.csharpier
                     process.StartInfo.CreateNoWindow = true;
                     process.StartInfo.RedirectStandardOutput = true;
                     process.StartInfo.RedirectStandardError = true;
-                    process.StartInfo.FileName = CSharpierSettings.m_CSharpierPath;
+                    process.StartInfo.FileName = CSharpierSettings.instance.m_CSharpierPath;
                     process.StartInfo.WorkingDirectory = RootPath;
                     process.StartInfo.Arguments = scriptFiles;
 
