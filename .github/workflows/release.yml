@@ -98,7 +98,10 @@ jobs:
           registry-url: https://registry.npmjs.org/
           scope: '@kagekirin'
       - name: Patch package.json
-        run: sed -i -e "s|npm.pkg.github.com|registry.npmjs.org|g" package.json
+        run: |
+          echo $(jq --arg v 'https://registry.npmjs.org/@kagekirin' '.publishConfig.registry = $v' package.json) > package.json.shadow && cat package.json.shadow | jq > package.json
+          rm package.json.shadow
+
       - name: Install dependencies
         run: yarn install
 
