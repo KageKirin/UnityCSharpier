@@ -99,7 +99,7 @@ jobs:
           scope: '@kagekirin'
       - name: Patch package.json
         run: |
-          echo $(jq --arg v 'https://registry.npmjs.org/@kagekirin' '.publishConfig.registry = $v' package.json) > package.json.shadow && cat package.json.shadow | jq > package.json
+          echo $(jq --arg v 'https://registry.npmjs.org/' '.publishConfig.registry = $v' package.json) > package.json.shadow && cat package.json.shadow | jq > package.json
           rm package.json.shadow
 
       - name: Install dependencies
