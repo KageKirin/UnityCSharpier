@@ -95,8 +95,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: latest
-          registry-url: https://registry.npmjs.org/@kagekirin/
-          scope: ''
+          registry-url: https://registry.npmjs.org/
+          scope: '@kagekirin'
       - name: Patch package.json
         run: sed -i -e "s|npm.pkg.github.com|registry.npmjs.org|g" package.json
       - name: Install dependencies
