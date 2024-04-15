@@ -98,7 +98,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
           scope: '@kagekirin'
       - name: Patch package.json
-        run: sed -i -e "s|npm.pkg.github.com/@kagekirin|registry.npmjs.org|g" package.json
+        run: sed -i -e "s|npm.pkg.github.com|registry.npmjs.org|g" package.json
       - name: Install dependencies
         run: yarn install
 
