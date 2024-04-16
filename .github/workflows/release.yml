@@ -71,6 +71,13 @@ jobs:
           node-version: latest
           registry-url: https://npm.pkg.github.com/
           scope: '@kagekirin'
+      - name: Setup .yarnrc.yml
+        run: |
+          yarn config set npmScopes.kagekirin.npmRegistryServer "https://npm.pkg.github.com"
+          yarn config set npmScopes.kagekirin.npmAlwaysAuth true
+          yarn config set npmScopes.kagekirin.npmAuthToken $NODE_AUTH_TOKEN
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: Install dependencies
         run: yarn install
 
