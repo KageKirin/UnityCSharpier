@@ -106,6 +106,13 @@ jobs:
           node-version: latest
           registry-url: https://registry.npmjs.org/
           scope: '@kagekirin'
+      - name: Setup .yarnrc.yml
+        run: |
+          yarn config set npmScopes.kagekirin.npmRegistryServer "https://registry.npmjs.org"
+          yarn config set npmScopes.kagekirin.npmAlwaysAuth true
+          yarn config set npmScopes.kagekirin.npmAuthToken $NODE_AUTH_TOKEN
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
       - name: Patch package.json
         run: |
           echo "******** BEFORE PATCH **********"
