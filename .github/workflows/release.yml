@@ -124,6 +124,8 @@ jobs:
           rm -r Assets/Editor*
 
       - name: Publish to NPM.JS Registry
-        run: yarn publish --verbose --non-interactive --access public
+        run: |
+          cp ${NPM_CONFIG_USERCONFIG} ./
+          yarn publish --verbose --non-interactive --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
