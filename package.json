@@ -1,6 +1,6 @@
 {
     "name": "com.kagekirin.unitycsharpier",
-    "version": "1.1.12",
+    "version": "1.1.13",
     "displayName": "CSharpier for Unity Editor",
     "description": "Unity Editor extension to run CSharpier before recompiling C# source files",
     "unity": "2021.1",
