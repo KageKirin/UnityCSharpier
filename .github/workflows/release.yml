@@ -119,10 +119,6 @@ jobs:
           echo $(jq --arg v 'https://registry.npmjs.org/' '.publishConfig.registry = $v' package.json) > package.json.shadow && cat package.json.shadow | jq > package.json
           rm package.json.shadow
 
-          name=$(jq -r '.name' package.json)
-          echo $(jq --arg v "@kagekirin/${name}" '.name = $v' package.json) > package.json.shadow && cat package.json.shadow | jq > package.json
-          rm package.json.shadow
-
           echo "================================"
           echo "********* AFTER PATCH **********"
           cat package.json | jq
