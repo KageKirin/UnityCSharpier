@@ -69,26 +69,25 @@ jobs:
           node-version: latest
           registry-url: https://npm.pkg.github.com/
           scope: '@kagekirin'
-      - name: Setup Yarn (latest)
-        run: |
-          yarn set version stable
-          yarn install
-      - name: Setup .yarnrc.yml
-        run: |
-          yarn config set npmScopes.kagekirin.npmRegistryServer "https://npm.pkg.github.com"
-          yarn config set npmScopes.kagekirin.npmAlwaysAuth true
-          yarn config set npmScopes.kagekirin.npmAuthToken $NODE_AUTH_TOKEN
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+      - uses: kagekirin/nugettier/.github/actions/install@main
       - name: Remove superfluous metafiles we do not want to pack
         run: |
           rm -r Assets/Editor*
 
       - name: Publish to GitHub NPM Registry
         run: |
-          cp ${NPM_CONFIG_USERCONFIG} ./
-          yarn publish --verbose --non-interactive --access public
+          npm pack
+          package=$(ls *.tgz)
+          dotnet nugettier upm publish-package \
+            --target https://npm.pkg.github.com/@kagekirin \
+            --access public \
+            --token $NODE_AUTH_TOKEN \
+            --npmrc $NPM_CONFIG_USERCONFIG \
+            $package
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
