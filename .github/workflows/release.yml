@@ -17,7 +17,6 @@ jobs:
         with:
           node-version: latest
 
-
       - name: Remove superfluous metafiles we do not want to pack
         run: |
           rm -r Assets/Editor*
@@ -90,53 +89,3 @@ jobs:
             $package
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
-
-  publish-to-npmjs-registry:
-    needs: release
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: latest
-          registry-url: https://registry.npmjs.org/
-          scope: '@kagekirin'
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: |
-            8.0.x
-      - uses: kagekirin/nugettier/.github/actions/install@main
-      - name: Patch package.json
-        run: |
-          echo "******** BEFORE PATCH **********"
-          cat package.json | jq
-          echo "================================"
-
-          echo $(jq --arg v 'https://registry.npmjs.org/@kagekirin' '.publishConfig.registry = $v' package.json) > package.json.shadow && cat package.json.shadow | jq > package.json
-          rm package.json.shadow
-
-          echo "================================"
-          echo "********* AFTER PATCH **********"
-          cat package.json | jq
-
-
-      - name: Remove superfluous metafiles we do not want to pack
-        run: |
-          rm -r Assets/Editor*
-
-      - name: Publish to NPM.JS Registry
-        run: |
-          npm pack
-          package=$(ls *.tgz)
-          dotnet nugettier upm publish-package \
-            --target https://registry.npmjs.org/@kagekirin \
-            --access public \
-            --token $NODE_AUTH_TOKEN \
-            --npmrc $NPM_CONFIG_USERCONFIG \
-            $package
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
