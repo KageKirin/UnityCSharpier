@@ -4,6 +4,7 @@
     "displayName": "CSharpier for Unity Editor",
     "description": "Unity Editor extension to run CSharpier before recompiling C# source files",
     "unity": "2021.1",
+    "license": "MPL-2.0",
     "files": [
         "Assets/Scripts/Editor/**",
         "Assets/Scripts/Editor.meta",
@@ -23,7 +24,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/KageKirin/UnityCSharpier.git",
+        "url": "git+https://github.com/KageKirin/UnityCSharpier.git",
         "directory": "com.kagekirin.csharpier"
     },
     "publishConfig": {

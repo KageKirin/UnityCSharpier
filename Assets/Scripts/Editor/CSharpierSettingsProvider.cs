@@ -1,9 +1,9 @@
-using UnityEngine;
-using UnityEditor;
-using UnityEngine.UIElements;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace kagekirin.csharpier
 {
@@ -51,7 +51,8 @@ namespace kagekirin.csharpier
             string path,
             SettingsScope scopes,
             IEnumerable<string> keywords = null
-        ) : base(path, scopes, keywords) { }
+        )
+            : base(path, scopes, keywords) { }
 
         public override void OnActivate(string searchContext, VisualElement rootElement)
         {
@@ -78,8 +79,9 @@ namespace kagekirin.csharpier
 
             GUILayout.Space(20.0f);
             var ignoreRect = EditorGUILayout.BeginHorizontal();
-            var csharpierignoreText =
-                m_CSharpierSettings.FindProperty("m_CSharpierIgnoreContents").stringValue;
+            var csharpierignoreText = m_CSharpierSettings
+                .FindProperty("m_CSharpierIgnoreContents")
+                .stringValue;
 
             EditorGUILayout.LabelField(Styles.csharpierIgnore, Styles.csharpierButtonSpaceOptions);
             csharpierignoreText = EditorGUILayout.TextArea(
