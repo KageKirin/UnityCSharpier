@@ -1,8 +1,4 @@
 
-## publishing
-publish:
-	npm publish --access public
-
 format:
 	@fd cs$$ -X dotnet csharpier {}
 	@fd cs$$ -X dos2unix -q -r {}
