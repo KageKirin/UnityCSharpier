@@ -24,7 +24,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/KageKirin/UnityCSharpier.git",
+        "url": "git+https://github.com/KageKirin/UnityCSharpier.git",
         "directory": "com.kagekirin.csharpier"
     },
     "publishConfig": {
