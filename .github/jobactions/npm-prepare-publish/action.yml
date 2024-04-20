@@ -1,0 +1,57 @@
+name: '[NPM] Prepare for publishing'
+description: >
+  Prepares environment for publishing.
+  Sets up .npmrc and patches package.json with correct registry.
+
+inputs:
+  registry-url:
+    description: Full registry URL (starting from https://) without scope
+    type: string
+    required: false
+    default: https://npm.pkg.github.com/
+  scope:
+    description: User/Organization scope
+    type: string
+    required: false
+    default: '@${{ github.repository_owner }}'
+  token:
+    required: true
+
+outputs:
+  package:
+    description: package name (without path)
+    value: ${{ steps.npm-pack.outputs.package }}
+  package-full:
+    description: package name with path
+    value: ${{ steps.npm-pack.outputs.package-full }}
+
+runs:
+  using: composite
+  steps:
+  - uses: kagekirin/gha-utils/.github/actions/install-prerequisites@main
+
+  - uses: actions/setup-node@v4
+    with:
+      node-version: latest
+      always-auth: true
+      registry-url: ${{ inputs.registry-url }}
+      scope: ${{ inputs.scope }}
+
+  - uses: kagekirin/gha-npm/.github/actions/npm-patch-spec-registry@main
+    with:
+      path: ${{ github.workspace }}
+      spec: package.json
+      registry-url: ${{ inputs.registry-url }}
+      scope: ${{ inputs.scope }}
+
+  - uses: ./.github/jobactions/build
+    with:
+      unity: 2022.3
+      configuration: Release
+
+  - id: npm-pack
+    uses: kagekirin/gha-npm/.github/actions/npm-pack@main
+    with:
+      path: ${{ github.workspace }}
+      spec: package.json
+      outdir: ./
