@@ -1,0 +1,20 @@
+name: Build UPM package
+inputs:
+  configuration:
+    required: false
+    default: Debug
+  unity:
+    required: true
+runs:
+  using: composite
+  steps:
+  - name: Build (${{ inputs.configuration }}) ${{ inputs.unity }}
+    shell: pwsh
+    run: |-
+      echo "building Solution"
+      echo "------ NOTHING TO DO (yet) -------"
+  - uses: kagekirin/gha-npm/.github/actions/npm-pack@main
+    with:
+      path: ${{ github.workspace }}
+      spec: package.json
+      outdir: ./
