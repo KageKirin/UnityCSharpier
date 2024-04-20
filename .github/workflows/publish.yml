@@ -1,0 +1,64 @@
+name: publish
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  test-npm:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write # allow GITHUB_TOKEN to publish packages
+    strategy:
+      matrix:
+        source: [github]
+        include:
+          - source: github
+            registry-url: https://npm.pkg.github.com/
+            scope: 'kagekirin'                        #must be lowercase, without '@'
+            username: ${{ github.repository_owner }}  #not lowercase
+            token: GITHUB_TOKEN
+    steps:
+    - uses: kagekirin/gha-utils/.github/actions/git-checkout-tags@main
+    - id: npm-prepare-publish
+      uses: ./.github/jobactions/npm-prepare-publish
+      with:
+        registry-url: ${{ matrix.registry-url }}
+        scope: ${{ matrix.scope }}
+        token: ${{ secrets[matrix.token] }}
+    - uses: kagekirin/gha-npm/.github/actions/npm-publish@main
+      with:
+        spec: package.json
+        token: ${{ secrets[matrix.token] }}
+        dry-run: true
+
+  npm:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write # allow GITHUB_TOKEN to publish packages
+    strategy:
+      matrix:
+        source: [github]
+        include:
+          - source: github
+            registry-url: https://npm.pkg.github.com/
+            scope: 'kagekirin'                        #must be lowercase, without '@'
+            username: ${{ github.repository_owner }}  #not lowercase
+            token: GITHUB_TOKEN
+    needs: test-npm
+    steps:
+    - uses: kagekirin/gha-utils/.github/actions/git-checkout-tags@main
+    - id: npm-prepare-publish
+      uses: ./.github/jobactions/npm-prepare-publish
+      with:
+        registry-url: ${{ matrix.registry-url }}
+        scope: ${{ matrix.scope }}
+        token: ${{ secrets[matrix.token] }}
+    - uses: kagekirin/gha-npm/.github/actions/npm-publish@main
+      with:
+        spec: package.json
+        token: ${{ secrets[matrix.token] }}
+        dry-run: false

@@ -1,7 +1,4 @@
-# This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
-# For more information see: https://help.github.com/actions/language-and-framework-guides/publishing-nodejs-packages
-
-name: Release package (NPM)
+name: release
 
 on:
   push:
@@ -11,81 +8,24 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: latest
-
-      - name: Remove superfluous metafiles we do not want to pack
-        run: |
-          rm -r Assets/Editor*
-
-      - name: Pack
-        run: npm pack
-      - name: Verify
-        run: |
-          ls com.kagekirin.unitycsharpier*.tgz
-          tar tvf com.kagekirin.unitycsharpier*.tgz
-      - name: Store package name in env
-        run: echo "package_name=`ls com.kagekirin.unitycsharpier*.tgz`" >> $GITHUB_ENV
-      - name: Verify package_name in env
-        run: echo "${{ env.package_name }}"
-
-      - name: Create release
-        uses: actions/create-release@v1
-        id: create_release
-        with:
-          draft: false
-          prerelease: false
-          release_name: Release ${{ github.ref_name }}
-          tag_name: ${{ github.ref }}
-          body_path: CHANGELOG.md
-        env:
-          GITHUB_TOKEN: ${{ github.TOKEN }}
-
-      - name: Upload release artifacts
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ env.package_name }}
-          asset_name: ${{ env.package_name }}
-          asset_content_type: application/gzip
-
-
-  publish-to-github-registry:
-    needs: release
-    runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write
+      contents: write # allow GITHUB_TOKEN to create releases
     steps:
-      - uses: actions/checkout@v4
+      - uses: kagekirin/gha-utils/.github/actions/git-checkout-tags@main
       - uses: actions/setup-node@v4
         with:
           node-version: latest
-          registry-url: https://npm.pkg.github.com/
-          scope: '@kagekirin'
-      - uses: actions/setup-dotnet@v4
+      - id: npm-pack
+        uses: kagekirin/gha-npm/.github/actions/npm-pack@main
         with:
-          dotnet-version: |
-            8.0.x
-      - uses: kagekirin/nugettier/.github/actions/install@main
-      - name: Remove superfluous metafiles we do not want to pack
-        run: |
-          rm -r Assets/Editor*
-
-      - name: Publish to GitHub NPM Registry
-        run: |
-          npm pack
-          package=$(ls *.tgz)
-          dotnet nugettier upm publish-package \
-            --target https://npm.pkg.github.com/@kagekirin \
-            --access public \
-            --token $NODE_AUTH_TOKEN \
-            --npmrc $NPM_CONFIG_USERCONFIG \
-            $package
+          path: ${{ github.workspace }}
+          spec: package.json
+          outdir: ./
+      - uses: kagekirin/gha-utils/.github/actions/gh-create-release@main
+        with:
+          title: Release ${{ github.action_ref }}
+          generate-notes: true
+          files: |
+            ${{ steps.npm-pack.outputs.package }}
         env:
-          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
