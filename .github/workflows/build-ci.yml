@@ -1,0 +1,89 @@
+name: build-ci
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+    types: [closed]
+
+jobs:
+  build:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+        unity: [2022.3]
+    steps:
+    - uses: kagekirin/gha-utils/.github/actions/git-checkout-tags@main
+    - uses: ./.github/jobactions/build
+      with:
+        configuration: ${{ matrix.configuration }}
+        unity: ${{ matrix.unity }}
+
+  test-tag:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - uses: kagekirin/gha-utils/.github/actions/git-checkout-tags@main
+      with:
+        ssh-key: "${{secrets.DEPLOY_KEY}}"
+    - id: create-tag
+      uses: ./.github/jobactions/tag
+    - shell: pwsh
+      run: |-
+        echo "new version: ${{ steps.create-tag.outputs.version }}"
+    - if: ${{ ! endsWith(github.ref_name, 'merge') }}
+      uses: kagekirin/gha-utils/.github/actions/git-push-tag@main
+      with:
+        remote: origin
+        branch: ${{ github.head_ref || github.ref_name }}
+        dry-run: true
+
+  test-npm:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write # allow GITHUB_TOKEN to publish packages
+    strategy:
+      matrix:
+        source: [github]
+        include:
+          - source: github
+            registry-url: https://npm.pkg.github.com/
+            scope: 'kagekirin'                        #must be lowercase, without '@'
+            username: ${{ github.repository_owner }}  #not lowercase
+            token: GITHUB_TOKEN
+    needs: build
+    steps:
+    - uses: kagekirin/gha-utils/.github/actions/git-checkout-tags@main
+    - id: npm-prepare-publish
+      uses: ./.github/jobactions/npm-prepare-publish
+      with:
+        registry-url: ${{ matrix.registry-url }}
+        scope: ${{ matrix.scope }}
+        token: ${{ secrets[matrix.token] }}
+    - uses: kagekirin/gha-npm/.github/actions/npm-publish@main
+      with:
+        spec: package.json
+        token: ${{ secrets[matrix.token] }}
+        dry-run: true
+
+  tag:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    needs: test-tag
+    steps:
+    - uses: kagekirin/gha-utils/.github/actions/git-checkout-tags@main
+      with:
+        ssh-key: "${{ secrets.DEPLOY_KEY }}"
+    - id: create-tag
+      uses: ./.github/jobactions/tag
+    - uses: kagekirin/gha-utils/.github/actions/git-push-tag@main
+      with:
+        remote: origin
+        branch: main
+        dry-run: false
+    

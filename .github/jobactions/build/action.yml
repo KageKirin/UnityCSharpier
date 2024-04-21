@@ -1,0 +1,17 @@
+name: jobactions/build
+inputs:
+  configuration:
+    required: false
+    default: Debug
+  unity:
+    required: true
+runs:
+  using: composite
+  steps:
+  - uses: kagekirin/gha-utils/.github/actions/install-prerequisites@main
+  - uses: kagekirin/gha-utils/.github/actions/install-version-tools@main
+  - name: Build ${{ inputs.unity }} ${{ inputs.configuration }}
+    uses: ./.github/actions/build
+    with:
+      configuration: ${{ inputs.configuration }}
+      unity: ${{ inputs.unity }}
