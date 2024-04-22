@@ -49,13 +49,18 @@ jobs:
       packages: write # allow GITHUB_TOKEN to publish packages
     strategy:
       matrix:
-        source: [github]
+        source: [github, npmjs]
         include:
           - source: github
             registry-url: https://npm.pkg.github.com/
             scope: 'kagekirin'                        #must be lowercase, without '@'
             username: ${{ github.repository_owner }}  #not lowercase
             token: GITHUB_TOKEN
+          - source: npmjs
+            registry-url: https://registry.npmjs.org
+            scope: ''                                 #must be EMPTY
+            username: ${{ github.repository_owner }}  #not lowercase
+            token: NPM_TOKEN
     needs: build
     steps:
     - uses: kagekirin/gha-utils/.github/actions/git-checkout-tags@main
